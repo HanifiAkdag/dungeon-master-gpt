@@ -3,6 +3,7 @@ import fandom
 
 from tools.fandom_tools import search_tool, get_subsections_tool, summarize_tool
 from tools.general_tools import roll_dice_tool
+from app_utils import radio_to_fandom_name
 
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_tool_calling_agent, AgentExecutor
@@ -15,10 +16,13 @@ st.title("RPG Dungeon Master")
 # Ask the user for the fandom if not already selected
 if "fandom_input" not in st.session_state:
     fandom_input = st.text_input("Please enter the fandom you want to use:")
-    st.write("Please enter a fandom to continue.")
+    radio_input = st.radio("Please select a fandom:", ["Harry Potter", "Star Wars", "Lord of the Rings", "Marvel", "DC"], horizontal=True, index=None)
+    if radio_input:
+        fandom_input = radio_input
+    st.write("Please select a fandom to continue.")
     if fandom_input:
-        st.session_state.fandom_input = fandom_input.capitalize()
-        fandom.set_wiki(fandom_input)
+        st.session_state.fandom_input = fandom_input
+        fandom.set_wiki(radio_to_fandom_name(fandom_input))
         st.rerun()
 else:
     st.text_input("Please enter the fandom you want to use:", value=st.session_state.fandom_input, disabled=True)
